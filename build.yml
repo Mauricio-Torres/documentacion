@@ -1,0 +1,36 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: Site
+
+steps:
+
+- checkout: self
+  fetchDepth: 1
+
+- task: UseRubyVersion@0
+  inputs:
+    versionSpec: '2'
+
+- script: |
+    gem install bundler
+    bundle install --retry=3 --jobs=4
+  displayName: 'bundle install'
+
+- script: exec jekyll build 
+  displayName: 'build docs'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: '$(Site.ServiceConnection)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az storage blob upload-batch \
+         --destination \$web \
+         --destination-path $(siteFolder) \
+         --account-name "$(Site.StorageAccountName)" \
+         --source "$(Build.SourcesDirectory)/_site" --output table --no-progress

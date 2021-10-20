@@ -1,0 +1,7 @@
+docs:
+  - title: Funcionalidades 
+    chapter: "funcionalidades_componentes"
+  - title: Integración entre ADM y ServiceNow 
+    chapter: "integracion_serviceNow"
+  - title: Integración entre ASDK V8 y Hp TechPulse 
+    chapter: "integracion_techPulse"
